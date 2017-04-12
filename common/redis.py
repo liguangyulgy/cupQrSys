@@ -7,6 +7,9 @@ from common.comm import singleton
 import time
 
 def handler(loop, context):
+    '''
+    本来打算在eventloop上注册异常处理函数，但是没玩明白，后续研究
+    '''
     print('in exception Handler')
     print(context)
 
@@ -42,19 +45,21 @@ class redis:
 
     @classmethod
     async def init(cls,loop=None,addr='127.0.0.1',port=6379):
-        if not loop:
-            loop = asyncio.get_event_loop()
-        loop.set_exception_handler(handler=handler)
+        # if not loop:
+        #     loop = asyncio.get_event_loop()
+        # loop.set_exception_handler(handler=handler)
         cls.conn = await aioredis.create_reconnecting_redis((addr,port),loop=loop,encoding='utf-8')
         print('hello')
         pass
 
     @classmethod
+    @parent.exceptionDecorator
     async def incr(cls,key=None):
         key = 'test'
         return await cls.conn.incr(key)
 
     @classmethod
+    @parent.exceptionDecorator
     async def set(cls,key,value):
         return await cls.conn.set(key,value)
 
@@ -75,11 +80,11 @@ if __name__ == '__main__':
     async def test():
         await redis.init()
         a = 0
-        #print(await redis.set('test',0))
+        print(await redis.set('test',0))
         start_time = time.time()
         while a<100000:
             a+=1
-            await redis.get('test')
+            await redis.incr('test')
         print('Time Used %s' % (time.time() - start_time))
 
     loop.run_until_complete(test())
