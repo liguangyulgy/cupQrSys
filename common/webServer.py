@@ -119,12 +119,22 @@ class HttpServerTools:
         return methodDecorator
 
     @classmethod
-    async def createServer(self,loop,host,port):
+    async def createServer(self,loop,host,port,staticPath = None,staticUrl=None):
         app = web.Application(loop=loop,middlewares=[loggingMidleWare,ResponseHandler])
         #将routes中记录的函数注册到app的路由上
         for method, path, func in self.routes:
             logging.info('add route %s %s => %s(%s)' % ( method, path, func.__name__, ','.join(inspect.signature(func).parameters.keys())))
             app.router.add_route(method, path, RequestHandler(app,func))
+        if staticPath:
+            try:
+                f = open(staticPath,mode='r')
+                app.router.add_static(staticUrl, staticPath)
+                logging.info(('add static route %s, local path %s' % (staticUrl,staticPath)))
+            except Exception as e:
+                logging.error('Invalid Static Path %s for %s' % (staticPath,staticUrl))
+            finally:
+                if f:
+                    f.close()
         return await loop.create_server(app.make_handler(),host,port)
 
 

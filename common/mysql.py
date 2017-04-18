@@ -4,7 +4,7 @@ import aiomysql
 import logging;logging.basicConfig(level=logging.INFO)
 
 from aiomysql.sa import create_engine
-from common.tableSchema import metaData,TblInsBase
+from common.tableSchema import metaData,InsBase
 import asyncio
 
 
@@ -15,12 +15,11 @@ metaData = MetaData()
 
 
 
-class dataBaseInterFace:
+class dbInf:
 
     engine=None
 
     @classmethod
-
     async def init(cls, dbConf=None):
         dbConf= dict(
             host = 'liguangyumysql.cf8iw2auduon.ap-southeast-1.rds.amazonaws.com',
@@ -36,18 +35,24 @@ class dataBaseInterFace:
 
 
     @classmethod
-    async def query(cls):
-        async with ( cls.engine.acquire())as conn:
-            r = await conn.execute(TblInsBase.select())
+    async def query(cls,tbl):
+        async with ( cls.engine.acquire()) as conn:
+            r = await conn.execute(tbl.select())
             for x in r:
                 print(x)
 
-
+    @classmethod
+    async def insert(cls,tbl,insRec={},*args,**kwargs):
+        async with( cls.engine.acquire()) as conn:
+            insRec.update(**kwargs)
+            sql = tbl.insert().values(insRec)
+            r = await conn.execute(sql)
+            return r
 
 
 if __name__ == '__main__':
     async def test():
-        await dataBaseInterFace.init()
-        await dataBaseInterFace.query()
+        await dbInf.init()
+        await dbInf.query()
     asyncio.get_event_loop().run_until_complete(test())
 
