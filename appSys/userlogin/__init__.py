@@ -8,7 +8,7 @@ import asyncio
 
 @post('/userRegister')
 async def userRegister(userName,phoneNum,password,emaillAddr):
-    r = await dbInf.insert(ts.UserInfo, userName=userName,phoneNum=phoneNum,password=password,emaillAddr=emaillAddr)
+    r = await dbInf.insert(ts.UserInfo,userId=userName+phoneNum, userName=userName,phoneNum=phoneNum,password=password,emaillAddr=emaillAddr)
     print(r)
     return {'Success':True}
     pass

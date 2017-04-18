@@ -1,6 +1,6 @@
 __author__ = 'LiGuangyu'
 from aiohttp import web
-import asyncio,functools,inspect,json
+import asyncio,functools,inspect,json,os
 import logging;logging.basicConfig(level=logging.INFO)
 from urllib import parse
 
@@ -126,15 +126,12 @@ class HttpServerTools:
             logging.info('add route %s %s => %s(%s)' % ( method, path, func.__name__, ','.join(inspect.signature(func).parameters.keys())))
             app.router.add_route(method, path, RequestHandler(app,func))
         if staticPath:
-            try:
-                f = open(staticPath,mode='r')
+            if os.path.exists(staticPath):
                 app.router.add_static(staticUrl, staticPath)
                 logging.info(('add static route %s, local path %s' % (staticUrl,staticPath)))
-            except Exception as e:
-                logging.error('Invalid Static Path %s for %s' % (staticPath,staticUrl))
-            finally:
-                if f:
-                    f.close()
+            else:
+                logging.error('Invalid Static Path %s for %s' % (staticPath, staticUrl))
+
         return await loop.create_server(app.make_handler(),host,port)
 
 
