@@ -1,7 +1,7 @@
 __author__ = 'LiGuangyu'
 
 import aiomysql
-import logging;logging.basicConfig(level=logging.DEBUG)
+import logging;logging.basicConfig(level=logging.INFO)
 
 from aiomysql.sa import create_engine
 from common.tableSchema import metaData,InsBase
@@ -28,7 +28,7 @@ class dbInf:
             password = 'gyligyli',
             db = 'CUPS_QR'
         )
-        cls.engine = await create_engine(**dbConf,echo=True)
+        cls.engine = await create_engine(**dbConf,echo=True,autocommit=True)
         from common.tableSchema import init
         init(dbConf)
 
@@ -47,23 +47,14 @@ class dbInf:
             insRec.update(**kwargs)
             sql = tbl.insert().values(insRec)
             r = await conn.execute(sql)
-            for x in r:
-                print(x)
             return r
-
-    @classmethod
-    async def testInsert(cls):
-        async with( cls.engine.acquire()) as conn:
-            await conn.execute('insert into `TBL_INS_BASE`(ins_id_cd,ins_en_nm) values("1","2")')
-            await conn.commit()
-
 
 
 if __name__ == '__main__':
     async def test():
         await dbInf.init()
+        await dbInf.query(InsBase)
         print(await dbInf.query(InsBase))
-        await dbInf.testInsert()
-        #await dbInf.insert(InsBase,{'ins_id_cd':'00001111','ins_en_nm':'test2'})
+        await dbInf.insert(InsBase,{'ins_id_cd':'00001111','ins_en_nm':'test2'})
     asyncio.get_event_loop().run_until_complete(test())
 

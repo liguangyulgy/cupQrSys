@@ -3,21 +3,50 @@
 <head>
     <meta charset="UTF-8">
     <title>用户注册</title>
-    <script src="https://unpkg.com/vue/dist/vue.js"></script>
+    <script src="/resources/vue.js"></script>
+    <script src="/resources/jquery-3.2.1.js"></script>
     <script>
         window.onload=function(){
         new Vue({
             el:'#hw',
             data:{
-                message:'Hello World'
+                message:'Hello World',
+                userName:'',
+                phoneNum:'',
+                password:'',
+                emaillAddr:''
+            },
+            methods:{
+                submit:function(event){
+                    event.preventDefault();
+                    var $form = $('#vm').find('form');
+                    $form.postJSON('/userRegister',this.$data,function(err,r){
+                        alert(this.$data)
+                        alter(r)
+                        if(err){
+                        }
+                        else{
+                           message = r
+                        }
+                    })
+                }
             }
         })
         }
     </script>
 </head>
 <body>
-    <div id="hw">
-        <p>{{message}}</p>
-    </div>
+        <form id="hw" v-on:submit="submit">
+            <p>UserName</p>
+            <input v-model="userName"/>
+            <p>PhoneNum</p>
+            <input v-model="phoneNum"/>
+            <p>Password</p>
+            <input v-model="password"/>
+            <p>EmailAddr</p>
+            <input v-model="emaillAddr"/>
+            <button type="submit">保存</button>
+            <p>{{message}}</p>
+        </form>
 </body>
 </html>

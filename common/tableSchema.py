@@ -28,7 +28,7 @@ CardBin = Table('TBL_CARD_BIN',metaData,
 '''用户信息表'''
 UserInfo = Table('TBL_USER_INF',metaData,
                  Column('id',Integer,primary_key=True),
-                 Column('user_id',String(200),key='userId',nullable=False),
+                 Column('user_id',String(200),key='userId',nullable=False,unique=True),
                  Column('nick_name',String(200),key='userName'),
                  Column('phone_num',String(20),nullable=False,key='phoneNum'),
                  Column('password',String(20),nullable=False,key='password'),

@@ -125,6 +125,8 @@ class HttpServerTools:
         for method, path, func in self.routes:
             logging.info('add route %s %s => %s(%s)' % ( method, path, func.__name__, ','.join(inspect.signature(func).parameters.keys())))
             app.router.add_route(method, path, RequestHandler(app,func))
+        path = os.path.join(os.path.dirname(__file__), './resources')
+        app.router.add_static('/resources/',path)
         if staticPath:
             if os.path.exists(staticPath):
                 app.router.add_static(staticUrl, staticPath)
