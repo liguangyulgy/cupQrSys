@@ -1,5 +1,6 @@
 __author__ = 'LiGuangyu'
 from aiohttp import web
+import aiohttp
 import asyncio,functools,inspect,json,os
 import logging;logging.basicConfig(level=logging.INFO)
 from urllib import parse
@@ -33,7 +34,7 @@ class RequestHandler(object):
         kw.update(dict(**urlArgs))
         #获取body的内容
         contentType = request.content_type.lower() if request.has_body else ''
-        if contentType.startswith('appliction/json'):
+        if contentType.startswith('application/json'):
             body = await request.json()
         elif contentType.startswith('application/x-www-form') or contentType.startswith('multipart/form-data'):
             body = await request.post()
@@ -53,6 +54,7 @@ class RequestHandler(object):
             if x not in args and '=' not in str(sigArgs[x]):
                 return Exception('Missing args %s' % x)
         #将原函数变为异步的
+        fn = self._func
         if not asyncio.iscoroutinefunction(self._func) and not inspect.isgeneratorfunction(self._func):
             fn = asyncio.coroutine(self._func)
         return await fn(**args)
@@ -85,14 +87,17 @@ async def ResponseHandler(app,handler):
                 resp.content_type = 'text/html;charset=utf-8'
                 return resp
             if isinstance(r, Exception):
-                return web.HTTPBadRequest(r)
+                return web.HTTPBadRequest(text=str(r))
             if isinstance(r,dict):
                 resp = web.Response(body=json.dumps(r).encode('utf-8'))
                 resp.content_type='application/json'
                 return resp
         except Exception as e:
-            logging.error(e)
-            return web.HTTPBadRequest(e)
+            if isinstance(e, web.HTTPNotModified):
+                return e
+            else:
+                logging.error(e)
+                return web.HTTPBadRequest(text=e)
     return rspHandler
 
 

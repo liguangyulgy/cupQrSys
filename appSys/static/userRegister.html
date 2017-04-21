@@ -19,16 +19,24 @@
             methods:{
                 submit:function(event){
                     event.preventDefault();
-                    var $form = $('#vm').find('form');
-                    $form.postJSON('/userRegister',this.$data,function(err,r){
-                        alert(this.$data)
-                        alter(r)
-                        if(err){
+                    var that = this
+                    $.ajax({
+                        type: "POST",
+                        url: "/userRegister",
+                        contentType: "application/json; charset=utf-8",
+                        data: JSON.stringify(this.$data),
+                        dataType: "json",
+                        success: function (message) {
+                            if (message > 0) {
+                                alert("messge" + message);
+                            }
+                        },
+                        error: function (message) {
+                            alert(message);
                         }
-                        else{
-                           message = r
-                        }
-                    })
+                    });
+
+
                 }
             }
         })
