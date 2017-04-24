@@ -8,9 +8,9 @@
     <script>
         window.onload=function(){
         new Vue({
-            el:'#hw',
+            el:'#register',
             data:{
-                message:'Hello World',
+                message:'',
                 userName:'',
                 phoneNum:'',
                 password:'',
@@ -26,25 +26,31 @@
                         contentType: "application/json; charset=utf-8",
                         data: JSON.stringify(this.$data),
                         dataType: "json",
-                        success: function (message) {
-                            if (message > 0) {
-                                alert("messge" + message);
-                            }
+                        success: function (content) {
+                            that.$data.message=content.Message
                         },
-                        error: function (message) {
-                            alert(message);
+                        error: function (err) {
+                            alert(err.message);
                         }
                     });
-
 
                 }
             }
         })
+
+        new Vue({
+            el='login',
+            data={
+                phoneNum:''
+                password:''
+            }
+        })
+
         }
     </script>
 </head>
 <body>
-        <form id="hw" v-on:submit="submit">
+        <form id="register" v-on:submit="submit">
             <p>UserName</p>
             <input v-model="userName"/>
             <p>PhoneNum</p>
@@ -55,6 +61,10 @@
             <input v-model="emaillAddr"/>
             <button type="submit">保存</button>
             <p>{{message}}</p>
+        </form>
+        <form id="login" >
+            <p>UserName</p>
+            <input
         </form>
 </body>
 </html>

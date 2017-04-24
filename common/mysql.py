@@ -20,15 +20,8 @@ class dbInf:
     engine=None
 
     @classmethod
-    async def init(cls, dbConf=None):
-        dbConf= dict(
-            host = 'liguangyumysql.cf8iw2auduon.ap-southeast-1.rds.amazonaws.com',
-            port = 3306,
-            user = 'gyli',
-            password = 'gyligyli',
-            db = 'CUPS_QR'
-        )
-        cls.engine = await create_engine(**dbConf,echo=True,autocommit=True)
+    async def init(cls, loop=None,dbConf=None):
+        cls.engine = await create_engine(loop=loop,**dbConf,echo=True,autocommit=True)
         from common.tableSchema import init
         init(dbConf)
 

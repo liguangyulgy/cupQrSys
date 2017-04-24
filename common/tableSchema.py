@@ -54,4 +54,5 @@ BindCard = Table('TBL_BIND_CARD',metaData,
 def init(dbConf):
     myEngine = create_engine('mysql+pymysql://{user}:{password}@{host}:{port}/{db}'.format(**dbConf))
     metaData.create_all(myEngine)
+    myEngine.dispose()
 

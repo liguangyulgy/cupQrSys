@@ -20,18 +20,21 @@ class baseConnectPool(object):
     pool = None
 
     @classmethod
-    async def init(cls,loop=None,addr='127.0.0.1',port=6379):
+    async def init(cls,loop=None,addr='127.0.0.1',port=6379,password=None):
         # if not loop:
         #     loop = asyncio.get_event_loop()
         # loop.set_exception_handler(handler=handler)
         try:
-            baseConnectPool._pool1 = await aioredis.create_pool((addr,port),loop=loop,encoding='utf-8',minsize=1,maxsize=1)
-            baseConnectPool._pool2 = await aioredis.create_pool((addr,port),loop=loop,encoding='utf-8',minsize=1,maxsize=1)
+            baseConnectPool._pool1 = await aioredis.create_pool((addr,port),loop=loop,password=password,encoding='utf-8',minsize=1,maxsize=1)
+            baseConnectPool._pool2 = await aioredis.create_pool((addr,port),loop=loop,password=password,encoding='utf-8',minsize=1,maxsize=1)
             baseConnectPool.pool = baseConnectPool._pool1
+            print('hello')
         except ConnectionRefusedError as e:
             print('Redis Cannot access')
             raise e
-        print('hello')
+        except Exception as e:
+            print('Error')
+            print(e)
         pass
 
     @classmethod
@@ -70,10 +73,10 @@ class redis(baseConnectPool):
         pass
 
     @classmethod
-    async def init(cls,loop=None,addr='127.0.0.1',port=6379):
+    async def init(cls,loop=None,addr='127.0.0.1',port=6379,password=None):
         a = super()
         print(a)
-        await super().init(loop=loop,addr=addr,port=port)
+        await super().init(loop=loop,addr=addr,port=port,password=password)
 
     @classmethod
     @baseConnectPool.tryCatch

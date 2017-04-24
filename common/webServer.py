@@ -77,27 +77,34 @@ async def ResponseHandler(app,handler):
         try:
             r = await(handler(request))
             if isinstance(r, web.StreamResponse):
+                '''直接返回Respongse对象'''
                 return r
             if isinstance(r, bytes):
+                '''比特流，对应文件下载等场合'''
                 resp = web.Response(body=r)
                 resp.content_type = 'application/octet-stream'
                 return resp
             if isinstance(r, str):
+                '''字符串，对应返回html的场合'''
                 resp = web.Response(body=r.encode('utf-8'))
-                resp.content_type = 'text/html;charset=utf-8'
+                resp.content_type = 'text/html'
                 return resp
             if isinstance(r, Exception):
-                return web.HTTPBadRequest(text=str(r))
+                '''返回异常，不建议采用'''
+                raise r
             if isinstance(r,dict):
+                '''Restful 风格的接口，建议使用'''
                 resp = web.Response(body=json.dumps(r).encode('utf-8'))
                 resp.content_type='application/json'
                 return resp
         except Exception as e:
-            if isinstance(e, web.HTTPNotModified):
+            if isinstance(e, web.HTTPException):
                 return e
             else:
+                '''处理函数出现异常，则进行封装，默认返回400错误'''
                 logging.error(e)
-                return web.HTTPBadRequest(text=e)
+                message = str(e)
+                return web.HTTPBadRequest(body=json.dumps({'success':False,'message':message}).encode('utf-8'),content_type='application/json')
     return rspHandler
 
 

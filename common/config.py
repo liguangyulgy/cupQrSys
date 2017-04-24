@@ -8,12 +8,23 @@ basicConfig={
         'password': 'gyligyli',
         'db': 'CUPS_QR'
     },
-    'Server':{
+    'redis':{
+        'addr':'127.0.0.1',
+        'port':6379,
+        'password':None
+    },
+    'AppServer':{
         'host':'127.0.0.1',
         'port':8888
     },
-    'staticPath':r'D:\PycharmProjects\cupQrSys\appSys\statics'
-
+    'CupServer':{
+        'host':'127.0.0.1',
+        'port':'8889'
+    },
+    'AcqServer':{
+        'host':'127.0.0.1',
+        'port':'8890'
+    },
 }
 
 

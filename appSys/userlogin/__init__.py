@@ -10,7 +10,7 @@ import asyncio
 async def userRegister(userName,phoneNum,password,emaillAddr):
     r = await dbInf.insert(ts.UserInfo,userId=userName+phoneNum, userName=userName,phoneNum=phoneNum,password=password,emaillAddr=emaillAddr)
     print(r)
-    return {'Success':True}
+    return {'Success':True,'Message':'Success, Please Login'}
     pass
 
 
