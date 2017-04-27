@@ -4,6 +4,7 @@ from common.webServer import HttpServerTools,post,get
 from common.mysql import dbInf
 import common.tableSchema as ts
 import asyncio
+from aiohttp import web
 
 
 @post('/userRegister')
@@ -12,6 +13,18 @@ async def userRegister(userName,phoneNum,password,emaillAddr):
     print(r)
     return {'Success':True,'Message':'Success, Please Login'}
     pass
+
+@post('/userLogin')
+async def userLogin(userName,password):
+    r = await dbInf.query(ts.UserInfos,userName=userName,password=password)
+    if r:
+        """登录成功，添加cookie"""
+        r = web.HTTPFound(location='todo')
+        r.set_cookie()
+        return r
+    else:
+        return {"Success":False,"Message":"Invalid User Name or Password."}
+
 
 
 

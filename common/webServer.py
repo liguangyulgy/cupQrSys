@@ -94,9 +94,9 @@ async def ResponseHandler(app,handler):
                 raise r
             if isinstance(r,dict):
                 '''Restful 风格的接口，建议使用'''
-                resp = web.Response(body=json.dumps(r).encode('utf-8'))
-                resp.content_type='application/json'
-                return resp
+                # resp = web.Response(body=json.dumps(r).encode('utf-8'))
+                # resp.content_type='application/json'
+                return web.json_response(r)
         except Exception as e:
             if isinstance(e, web.HTTPException):
                 return e

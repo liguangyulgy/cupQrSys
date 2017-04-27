@@ -28,9 +28,13 @@ class dbInf:
 
 
     @classmethod
-    async def query(cls,tbl):
+    async def query(cls,tbl,conditions={},*args,**kwargs):
         async with ( cls.engine.acquire()) as conn:
-            r = await conn.execute(tbl.select())
+            sql = tbl.select()
+            cc = conditions.update(kwargs)
+            for k,y in cc.items:
+                sql = sql.where(tbl.c[k]==y)
+            r = await conn.execute(sql)
             for x in r:
                 print(x)
 
