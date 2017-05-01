@@ -131,8 +131,9 @@ class HttpServerTools:
         return methodDecorator
 
     @classmethod
-    async def createServer(self,loop,host,port,staticPath = None,staticUrl=None):
-        app = web.Application(loop=loop,middlewares=[loggingMidleWare,ResponseHandler])
+    async def createServer(self,loop,host,port,staticPath = None,staticUrl=None,middlewareList = None):
+        middlewares = [loggingMidleWare,ResponseHandler].extend(middlewareList)
+        app = web.Application(loop=loop,middlewares=middlewares)
         #将routes中记录的函数注册到app的路由上
         for method, path, func in self.routes:
             logging.info('add route %s %s => %s(%s)' % ( method, path, func.__name__, ','.join(inspect.signature(func).parameters.keys())))

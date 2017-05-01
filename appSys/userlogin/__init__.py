@@ -3,20 +3,31 @@ __author__ = 'LiGuangyu'
 from common.webServer import HttpServerTools,post,get
 from common.mysql import dbInf
 import common.tableSchema as ts
-import asyncio
+import asyncio,hashlib,time
 from aiohttp import web
+import logging;logging.basicConfig(level=logging.INFO)
+
+COOKIE_NAME = "liguangyuCookie"
+_COOKIE_KEY = "liguangyu@unionpay.coms"
+
+def encrySlat(password,userName):
+    salt = "liguangyu@unionpay.com"
+    return hashlib.sha3_256(password + salt + userName).hexdigest()
+
+
 
 
 @post('/userRegister')
 async def userRegister(userName,phoneNum,password,emaillAddr):
-    r = await dbInf.insert(ts.UserInfo,userId=userName+phoneNum, userName=userName,phoneNum=phoneNum,password=password,emaillAddr=emaillAddr)
+    userId = hashlib.md5(userName+ str(time.time()))
+    r = await dbInf.insert(ts.UserInfo,userId=userId, userName=userName,phoneNum=phoneNum,password=encrySlat(password,userName),emaillAddr=emaillAddr)
     print(r)
     return {'Success':True,'Message':'Success, Please Login'}
     pass
 
 @post('/userLogin')
 async def userLogin(userName,password):
-    r = await dbInf.query(ts.UserInfos,userName=userName,password=password)
+    r = await dbInf.queryOne(ts.UserInfos,userName=userName,password=encrySlat(password,userName))
     if r:
         """登录成功，添加cookie"""
         r = web.HTTPFound(location='todo')

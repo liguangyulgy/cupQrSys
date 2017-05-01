@@ -20,23 +20,33 @@ class dbInf:
     engine=None
 
     @classmethod
-    async def init(cls, loop=None,dbConf=None):
+    async def init(cls, loop=None,dbConf={}):
         cls.engine = await create_engine(loop=loop,**dbConf,echo=True,autocommit=True)
         from common.tableSchema import init
         init(dbConf)
 
 
-
     @classmethod
-    async def query(cls,tbl,conditions={},*args,**kwargs):
+    async def _query(cls,tbl,conditions={},_unique = False,*args,**kwargs):
         async with ( cls.engine.acquire()) as conn:
             sql = tbl.select()
             cc = conditions.update(kwargs)
             for k,y in cc.items:
                 sql = sql.where(tbl.c[k]==y)
             r = await conn.execute(sql)
-            for x in r:
-                print(x)
+            if _unique:
+                return r.first()
+            else:
+                return r.fetchall()
+
+    @classmethod
+    async def queryAll(cls,tbl,conditions={},*args,**kwargs):
+        return await cls._query(tbl,conditions={},_unique = False,*args,**kwargs)
+
+    @classmethod
+    async def queryOne(cls,tbl,conditions={},*args,**kwargs):
+        return await cls._query(tbl,conditions={},_unique = True,*args,**kwargs)
+
 
     @classmethod
     async def insert(cls,tbl,insRec={},*args,**kwargs):
