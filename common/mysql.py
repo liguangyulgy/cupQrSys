@@ -53,6 +53,7 @@ class dbInf:
         async with( cls.engine.acquire()) as conn:
             insRec.update(**kwargs)
             sql = tbl.insert().values(insRec)
+            logging.info(sql)
             r = await conn.execute(sql)
             return r
 

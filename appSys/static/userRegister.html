@@ -38,21 +38,21 @@
         })
 
         new Vue({
-            el='login',
-            data={
-                userName:''
+            el:'#login',
+            data:{
+                userName:'',
                 password:''
-            }，
+            },
             methods:{
-                login:funcion(){
+                login:function(event){
                     $.ajax({
                         type:"POST",
                         url:"/userLogin",
                         contentType:"application/json; charset=utf-8",
                         data: JSON.stringify(this.$data),
-                        dataType:"json"，
+                        dataType:"json",
                         success: function(content){
-
+                            alert(content.message);
                         }
                     })
                 }
@@ -75,7 +75,7 @@
             <button type="submit">保存</button>
             <p>{{message}}</p>
         </form>
-        <form id="login" >
+        <form id="login" v-on:submit="login">
             <p>UserName</p>
             <input v-model="userName"/>
             <p>Password</p>

@@ -12,14 +12,14 @@ _COOKIE_KEY = "liguangyu@unionpay.coms"
 
 def encrySlat(password,userName):
     salt = "liguangyu@unionpay.com"
-    return hashlib.sha3_256(password + salt + userName).hexdigest()
+    return hashlib.sha3_256((password + salt + userName).encode()).hexdigest()
 
 
 
 
 @post('/userRegister')
 async def userRegister(userName,phoneNum,password,emaillAddr):
-    userId = hashlib.md5(userName+ str(time.time()))
+    userId = hashlib.md5((userName+ str(time.time())).encode()).hexdigest()
     r = await dbInf.insert(ts.UserInfo,userId=userId, userName=userName,phoneNum=phoneNum,password=encrySlat(password,userName),emaillAddr=emaillAddr)
     print(r)
     return {'Success':True,'Message':'Success, Please Login'}
