@@ -1,11 +1,18 @@
 __author__ = 'LiGuangyu'
 
-from common.webServer import HttpServerTools,post,get
-from common.mysql import dbInf
-import common.tableSchema as ts
-import asyncio,hashlib,time
+import asyncio
+import hashlib
+import logging;
+import time
+
 from aiohttp import web
-import logging;logging.basicConfig(level=logging.INFO)
+
+import appSys.tableSchema as ts
+from common.mysql import dbInf
+from common.webServer import post
+
+logging.basicConfig(level=logging.INFO)
+from . import cookie
 
 COOKIE_NAME = "liguangyuCookie"
 _COOKIE_KEY = "liguangyu@unionpay.coms"
@@ -27,11 +34,12 @@ async def userRegister(userName,phoneNum,password,emaillAddr):
 
 @post('/userLogin')
 async def userLogin(userName,password):
-    r = await dbInf.queryOne(ts.UserInfos,userName=userName,password=encrySlat(password,userName))
-    if r:
+    user = await dbInf.queryOne(ts.UserInfo,userName=userName,password=encrySlat(password,userName))
+    if user:
         """登录成功，添加cookie"""
-        r = web.HTTPFound(location='todo')
-        r.set_cookie()
+        r = web.HTTPFound(location='/s/bindcard.html')
+        ck = cookie.user2cookie(user,3600)
+        r.set_cookie(cookie.COOKIE_NAME,ck)
         return r
     else:
         return {"Success":False,"Message":"Invalid User Name or Password."}

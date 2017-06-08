@@ -7,16 +7,19 @@ from common.config import basicConfig,merge
 import logging;logging.basicConfig(level=logging.INFO)
 from common.mysql import dbInf
 from common.redis import redis
+from .userlogin.cookie import cookie_check
+from .tableSchema import dbTableInit
 
 from . import userlogin
 
 def main():
     loop = asyncio.get_event_loop()
+    dbTableInit(basicConfig['db'])
     loop.run_until_complete(dbInf.init(loop=loop, dbConf=basicConfig['db']))
     loop.run_until_complete(redis.init(loop=loop,**basicConfig['redis']))
     print(__file__)
     staticPath = os.path.join(os.path.dirname(__file__),'static')
-    srv = HttpServerTools.createServer(loop = loop, host=basicConfig['AppServer']['host'], port=basicConfig['AppServer']['port'], staticPath=staticPath,staticUrl='/s/')
+    srv = HttpServerTools.createServer(loop = loop, host=basicConfig['AppServer']['host'], port=basicConfig['AppServer']['port'], staticPath=staticPath,staticUrl='/s/',middlewareList=[cookie_check])
     loop.run_until_complete(srv)
     loop.run_forever()
     pass

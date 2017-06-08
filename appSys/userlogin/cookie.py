@@ -1,11 +1,15 @@
 __author__ = 'LiGuangyu'
 
-from common.webServer import HttpServerTools,post,get
-from common.mysql import dbInf
-import common.tableSchema as ts
-import asyncio,hashlib,time
+import hashlib
+import logging;
+import time
+
 from aiohttp import web
-import logging;logging.basicConfig(level=logging.INFO)
+
+import appSys.tableSchema as ts
+from common.mysql import dbInf
+
+logging.basicConfig(level=logging.INFO)
 
 '''根据用户ID，密码，过期时间计算cooike，用sha3-256加密
     每个post请求都判断cookie，拦截无效请求重定向至登录页面'''
@@ -44,7 +48,7 @@ async def cookie_check(app, handler):
         request.__user__ = None
         loginUrl = '/s/userRegister.html'
         whiteList = ['/userLogin','/userRegister']
-        if  (request.uri in whiteList) or ( request.method == 'GET' ):
+        if  (request.path in whiteList) or ( request.method == 'GET' ):
             '''如果是登录页面或者get请求，则放过
             这里没法判断是否是获取静态资源，后续可以判断后缀，或者把静态资源部署到nginx上'''
             return await(handler(request))
@@ -61,7 +65,7 @@ async def cookie_check(app, handler):
 
 def user2cookie(user,max_age):
     expires = str(int(time.time()) + max_age)
-    s = '%s-%s-%s-%s' % (user['userId'], user['password'], expires, _COOKIE_KEY)
-    L = [user['userId'] ,expires, hashlib.sha3_256(s.encode('utf-8')).hexdigest()]
+    s = '%s-%s-%s-%s' % (user[ts.UserInfo.c.userId], user[ts.UserInfo.c.password], expires, _COOKIE_KEY)
+    L = [user[ts.UserInfo.c.userId] ,expires, hashlib.sha3_256(s.encode('utf-8')).hexdigest()]
     return '-'.join(L)
 

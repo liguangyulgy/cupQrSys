@@ -1,14 +1,12 @@
 __author__ = 'LiGuangyu'
 
-import aiomysql
 import logging;logging.basicConfig(level=logging.INFO)
 
 from aiomysql.sa import create_engine
-from common.tableSchema import metaData,InsBase
 import asyncio
 
 
-from sqlalchemy import Table,Column,MetaData,Integer,String,TIMESTAMP,func
+from sqlalchemy import MetaData
 
 metaData = MetaData()
 
@@ -22,22 +20,22 @@ class dbInf:
     @classmethod
     async def init(cls, loop=None,dbConf={}):
         cls.engine = await create_engine(loop=loop,**dbConf,echo=True,autocommit=True)
-        from common.tableSchema import init
-        init(dbConf)
 
 
     @classmethod
     async def _query(cls,tbl,conditions={},_unique = False,*args,**kwargs):
         async with ( cls.engine.acquire()) as conn:
             sql = tbl.select()
-            cc = conditions.update(kwargs)
-            for k,y in cc.items:
+            cc = {}
+            cc.update(conditions)
+            cc.update(kwargs)
+            for k,y in cc.items():
                 sql = sql.where(tbl.c[k]==y)
             r = await conn.execute(sql)
             if _unique:
-                return r.first()
+                return await r.first()
             else:
-                return r.fetchall()
+                return await r.fetchall()
 
     @classmethod
     async def queryAll(cls,tbl,conditions={},*args,**kwargs):
@@ -59,6 +57,7 @@ class dbInf:
 
 
 if __name__ == '__main__':
+    from cupQrSys.tableSchema import InsBase
     async def test():
         await dbInf.init()
         await dbInf.query(InsBase)

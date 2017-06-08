@@ -45,15 +45,21 @@
             },
             methods:{
                 login:function(event){
+                    event.preventDefault();
+                    var that = this
                     $.ajax({
                         type:"POST",
                         url:"/userLogin",
                         contentType:"application/json; charset=utf-8",
-                        data: JSON.stringify(this.$data),
+                        data: JSON.stringify(that.$data),
                         dataType:"json",
                         success: function(content){
                             alert(content.message);
+                        },
+                        error: function (err) {
+                            alert(err.message);
                         }
+
                     })
                 }
             }
