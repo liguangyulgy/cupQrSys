@@ -23,8 +23,9 @@ class Field:
     def check(self):
         if len(self.value) > self.fieldLength or len(self.value) < self.fieldMinLength:
             return False
-        else:
-            return True
+        elif 'N'.equals(self.fieldType):
+            if not self.value.isdigit():
+                return True
 
 def fieldFactory(name, fieldType, length, minlength = 0, *, parent = Field):
     if minlength ==0:
