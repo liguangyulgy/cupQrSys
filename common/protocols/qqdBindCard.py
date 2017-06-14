@@ -1,14 +1,16 @@
 from .fields import fieldFactory
+from .fields import Field
+from sqlalchemy import Column,Integer,String,TIMESTAMP,CHAR,Table,func
 
 
-class qqdBindCard:
+class qqdProtocol:
     version = fieldFactory('version', 'NS', 5)  # 版本号
     certId = fieldFactory('certId', 'N', 128, 1)
-    signature = fieldFactory('signature', 'ANS',1024, 1)
+    signature = fieldFactory('signature', 'ANS', 1024, 1)
     encoding = fieldFactory('encoding', 'ANS', 20, 1)
     txnType = fieldFactory('txnType', 'N', 2)
     txnSubType = fieldFactory('txnSubType', 'N', 2)
-    bizTyp = fieldFactory('bizType', 'N', 6)
+    bizType = fieldFactory('bizType', 'N', 6)
     frontUrl = fieldFactory('frontUrl', 'ANS', 256, 1)
     backUrl = fieldFactory('backUrl', 'ANS', 256, 1)
     accessType = fieldFactory('accessType' 'N',1)
@@ -89,3 +91,69 @@ class qqdBindCard:
     accSplitData = fieldFactory('accSplitData', 'ANS', 512, 1)
     crtlRule = fieldFactory('ctrlRule', 'N', 32)
     districtName = fieldFactory('districtName', 'ANS', 64)
+
+
+
+
+class bindcardRequest:
+
+    def __init__(self):
+        self.version = qqdProtocol.version()
+        self.encodeing = qqdProtocol.encoding()
+        self.certId = qqdProtocol.certId()
+        self.signature = qqdProtocol.signature()
+        self.signMethod = qqdProtocol.signMethd()
+        self.txnType = qqdProtocol.txnType()
+        self.txnSubType = qqdProtocol.txnSubType()
+        self.bizType = qqdProtocol.bizType()
+        self.accessType = qqdProtocol.accessType()
+        self.channelType = qqdProtocol.channelType()
+        self.frontUrl = qqdProtocol.frontUrl()
+        self.backUrl = qqdProtocol.backUrl()
+        self.acqInsCode = qqdProtocol.acqInsCode()
+        self.merId = qqdProtocol.merId()
+        self.merCatCode = qqdProtocol.merCateCode()
+        self.merName = qqdProtocol.merName()
+        self.merAbbr = qqdProtocol.merAbbr()
+        self.subMerId = qqdProtocol.subMerId()
+        self.subMerName = qqdProtocol.subMerName()
+        self.subMerAbbr = qqdProtocol.subMerAbbr()
+        self.orderId = qqdProtocol.orderId()
+        self.txnTime = qqdProtocol.txnTime()
+        self.accType = qqdProtocol.accType()
+        self.accNo = qqdProtocol.accNo()
+        self.customerInfo = qqdProtocol.customerInfo()
+        self.reqReserved = qqdProtocol.reqReserved()
+        self.reserved = qqdProtocol.reserved()
+        self.encryptCertId = qqdProtocol.encryptCertId()
+        self.tokenPayData = qqdProtocol.tokenPayData()
+        self.ctrlRule = qqdProtocol.ctrlRule()
+        self.billQueryInfo = qqdProtocol.billQueryInfo()
+
+
+
+        @classmethod
+        def getTableSchema(cls, metadata, tableName = 'TBL_BIND_CARD_REQUEST'):
+            record = bindcardRequest()
+            columns = []
+            for key in record.__dict__:
+                attr = getattr(record,key)
+                if isinstance(attr, Field):
+                    pass
+                    cname = key
+                    clen = attr.fieldLength
+                    ctype = String(clen)
+                    if attr.fieldLength == attr.fieldMinLength and attr.fieldLength < 20:
+                        ctype = CHAR(clen)
+                    elif 'YYYYMMDDhhmmss'.equals(attr.fieldType):
+                        ctype = TIMESTAMP
+                    columns.append(Column(cname,ctype))
+            revTable = Table(tableName,metadata,
+                             Column('id', Integer,primary_key=True),
+                             *columns,
+                             Column('create_ts', TIMESTAMP, default=func.current_timestamp()),
+                             Column('update_ts', TIMESTAMP, onupdate=func.current_timestamp()),
+                             )
+            return revTable
+
+

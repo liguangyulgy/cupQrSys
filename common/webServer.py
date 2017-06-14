@@ -1,6 +1,5 @@
 __author__ = 'LiGuangyu'
 from aiohttp import web
-import aiohttp
 import asyncio,functools,inspect,json,os
 import logging;logging.basicConfig(level=logging.INFO)
 from urllib import parse
@@ -131,12 +130,12 @@ class HttpServerTools:
         return methodDecorator
 
     @classmethod
-    async def createServer(self,loop,host,port,staticPath = None,staticUrl=None,middlewareList = []):
+    async def createServer(cls,loop,host,port,staticPath = None,staticUrl=None,middlewareList = []):
         middlewares = [loggingMidleWare,ResponseHandler]
         middlewares.extend(middlewareList)
         app = web.Application(loop=loop,middlewares=middlewares)
         #将routes中记录的函数注册到app的路由上
-        for method, path, func in self.routes:
+        for method, path, func in cls.routes:
             logging.info('add route %s %s => %s(%s)' % ( method, path, func.__name__, ','.join(inspect.signature(func).parameters.keys())))
             app.router.add_route(method, path, RequestHandler(app,func))
         path = os.path.join(os.path.dirname(__file__), './resources')
