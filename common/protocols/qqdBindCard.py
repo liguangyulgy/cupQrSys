@@ -98,8 +98,8 @@ class qqdProtocol:
 class bindcardRequest:
 
     def __init__(self):
-        self.version = qqdProtocol.version()
-        self.encodeing = qqdProtocol.encoding()
+        self.version = qqdProtocol.version().v('5.1.0')
+        self.encodeing = qqdProtocol.encoding().v('UTF-8')
         self.certId = qqdProtocol.certId()
         self.signature = qqdProtocol.signature()
         self.signMethod = qqdProtocol.signMethd()
@@ -136,6 +136,7 @@ class bindcardRequest:
         def getTableSchema(cls, metadata, tableName = 'TBL_BIND_CARD_REQUEST'):
             record = bindcardRequest()
             columns = []
+            '''遍历对象的属性，构造数据库字段'''
             for key in record.__dict__:
                 attr = getattr(record,key)
                 if isinstance(attr, Field):
@@ -148,6 +149,7 @@ class bindcardRequest:
                     elif 'YYYYMMDDhhmmss'.equals(attr.fieldType):
                         ctype = TIMESTAMP
                     columns.append(Column(cname,ctype))
+            '''根据对象的属性及固定的字段，构造表结构'''
             revTable = Table(tableName,metadata,
                              Column('id', Integer,primary_key=True),
                              *columns,
