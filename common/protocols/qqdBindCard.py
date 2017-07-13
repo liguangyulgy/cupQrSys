@@ -1,5 +1,5 @@
 from .fields import fieldFactory
-from .fields import Field
+from .fields import Field,ComField
 from sqlalchemy import Column,Integer,String,TIMESTAMP,CHAR,Table,func
 
 
@@ -13,7 +13,7 @@ class qqdProtocol:
     bizType = fieldFactory('bizType', 'N', 6)
     frontUrl = fieldFactory('frontUrl', 'ANS', 256, 1)
     backUrl = fieldFactory('backUrl', 'ANS', 256, 1)
-    accessType = fieldFactory('accessType' 'N',1)
+    accessType = fieldFactory('accessType', 'N', 1)
     acqInsCode = fieldFactory('acqInsCode', 'AN', 11, 8)
     merCatCode = fieldFactory('merCatCode', 'N', 4)
     merId = fieldFactory('merId', 'AN', 15)
@@ -36,7 +36,15 @@ class qqdProtocol:
     issInsCode = fieldFactory('insInsCode', 'ANS', 11, 1)
     issInsProvince = fieldFactory('issInsCity', 'ANS', 30, 1)
     issInsName = fieldFactory('issInsName', 'ANS', 60, 1)
-    customerInfo = fieldFactory('customerInfo', 'ANS', 1024, 1)
+    customerInfo = fieldFactory('customerInfo', ComField, 1024, 1,parent=ComField)
+    customerInfo.init(
+        certifTp = fieldFactory('customerInfo_certifTp', 'N', 2),
+        certifId = fieldFactory('customerInfo_certifId', 'ANS', 20, 1),
+        customerNm = fieldFactory('customerInfo_customerNm', 'ANS', 30, 1),
+        smsCode = fieldFactory('customerInfo_smsCode', 'N', 6),
+        pin = fieldFactory('customerInfo_pin', 'ANS', 256, 1),
+        encryptedInfo = fieldFactory('customerInfo_encryptedInfo', 'ANS', 1024, 1)
+    )
     txnAmt = fieldFactory('txnAmt', 'N', 12, 1)
     balance = fieldFactory('balance', 'AN', 256, 1)
     billType = fieldFactory('billType', 'ANS', 2)
@@ -89,73 +97,81 @@ class qqdProtocol:
     encryptPubKeyCert = fieldFactory('encryptPubKeyCert', 'AN', 2048)
     certType = fieldFactory('certType', 'N', 2)
     accSplitData = fieldFactory('accSplitData', 'ANS', 512, 1)
-    crtlRule = fieldFactory('ctrlRule', 'N', 32)
+    ctrlRule = fieldFactory('ctrlRule', 'N', 32)
     districtName = fieldFactory('districtName', 'ANS', 64)
 
 
 
 
-class bindcardRequest:
+class BindcardRequest:
 
     def __init__(self):
-        self.version = qqdProtocol.version().v('5.1.0')
-        self.encodeing = qqdProtocol.encoding().v('UTF-8')
-        self.certId = qqdProtocol.certId()
-        self.signature = qqdProtocol.signature()
-        self.signMethod = qqdProtocol.signMethd()
-        self.txnType = qqdProtocol.txnType()
-        self.txnSubType = qqdProtocol.txnSubType()
-        self.bizType = qqdProtocol.bizType()
-        self.accessType = qqdProtocol.accessType()
-        self.channelType = qqdProtocol.channelType()
-        self.frontUrl = qqdProtocol.frontUrl()
-        self.backUrl = qqdProtocol.backUrl()
-        self.acqInsCode = qqdProtocol.acqInsCode()
-        self.merId = qqdProtocol.merId()
-        self.merCatCode = qqdProtocol.merCateCode()
-        self.merName = qqdProtocol.merName()
-        self.merAbbr = qqdProtocol.merAbbr()
-        self.subMerId = qqdProtocol.subMerId()
-        self.subMerName = qqdProtocol.subMerName()
-        self.subMerAbbr = qqdProtocol.subMerAbbr()
-        self.orderId = qqdProtocol.orderId()
-        self.txnTime = qqdProtocol.txnTime()
-        self.accType = qqdProtocol.accType()
-        self.accNo = qqdProtocol.accNo()
-        self.customerInfo = qqdProtocol.customerInfo()
-        self.reqReserved = qqdProtocol.reqReserved()
-        self.reserved = qqdProtocol.reserved()
-        self.encryptCertId = qqdProtocol.encryptCertId()
-        self.tokenPayData = qqdProtocol.tokenPayData()
-        self.ctrlRule = qqdProtocol.ctrlRule()
-        self.billQueryInfo = qqdProtocol.billQueryInfo()
 
+        self.__dict__['version'] = qqdProtocol.version('5.1.0')
+        self.__dict__['encodeing'] = qqdProtocol.encoding('UTF-8')
+        self.__dict__['certId'] = qqdProtocol.certId()
+        self.__dict__['signature'] = qqdProtocol.signature()
+        self.__dict__['signMethod'] = qqdProtocol.signMethd()
+        self.__dict__['txnType'] = qqdProtocol.txnType()
+        self.__dict__['txnSubType'] = qqdProtocol.txnSubType()
+        self.__dict__['bizType'] = qqdProtocol.bizType()
+        self.__dict__['accessType'] = qqdProtocol.accessType()
+        self.__dict__['channelType'] = qqdProtocol.channelType()
+        self.__dict__['frontUrl'] = qqdProtocol.frontUrl()
+        self.__dict__['backUrl'] = qqdProtocol.backUrl()
+        self.__dict__['acqInsCode'] = qqdProtocol.acqInsCode()
+        self.__dict__['merId'] = qqdProtocol.merId()
+        self.__dict__['merCatCode'] = qqdProtocol.merCatCode()
+        self.__dict__['merName'] = qqdProtocol.merName()
+        self.__dict__['merAbbr'] = qqdProtocol.merAbbr()
+        self.__dict__['subMerId'] = qqdProtocol.subMerId()
+        self.__dict__['subMerName'] = qqdProtocol.subMerName()
+        self.__dict__['subMerAbbr'] = qqdProtocol.subMerAbbr()
+        self.__dict__['orderId'] = qqdProtocol.orderId()
+        self.__dict__['txnTime'] = qqdProtocol.txnTime()
+        self.__dict__['accType'] = qqdProtocol.accType()
+        self.__dict__['accNo'] = qqdProtocol.accNo()
+        self.__dict__['customerInfo'] = qqdProtocol.customerInfo()
+        self.__dict__['reqReserved'] = qqdProtocol.reqReserved()
+        self.__dict__['reserved'] = qqdProtocol.reserved()
+        self.__dict__['encryptCertId'] = qqdProtocol.encryptCertId()
+        self.__dict__['tokenPayData'] = qqdProtocol.tokenPayData()
+        self.__dict__['ctrlRule'] = qqdProtocol.ctrlRule()
+        self.__dict__['billQueryInfo'] = qqdProtocol.billQueryInfo()
 
+    def __getattr__(self, key):
+        return self.key.v
 
-        @classmethod
-        def getTableSchema(cls, metadata, tableName = 'TBL_BIND_CARD_REQUEST'):
-            record = bindcardRequest()
-            columns = []
-            '''遍历对象的属性，构造数据库字段'''
-            for key in record.__dict__:
-                attr = getattr(record,key)
-                if isinstance(attr, Field):
-                    pass
-                    cname = key
-                    clen = attr.fieldLength
-                    ctype = String(clen)
-                    if attr.fieldLength == attr.fieldMinLength and attr.fieldLength < 20:
-                        ctype = CHAR(clen)
-                    elif 'YYYYMMDDhhmmss'.equals(attr.fieldType):
-                        ctype = TIMESTAMP
-                    columns.append(Column(cname,ctype))
-            '''根据对象的属性及固定的字段，构造表结构'''
-            revTable = Table(tableName,metadata,
-                             Column('id', Integer,primary_key=True),
-                             *columns,
-                             Column('create_ts', TIMESTAMP, default=func.current_timestamp()),
-                             Column('update_ts', TIMESTAMP, onupdate=func.current_timestamp()),
-                             )
-            return revTable
+    def __setattr__(self, key, value):
+        self.__dict__[key].v = value
+
+    def __getitem__(self, key):
+        return self.key.v
+
+    @classmethod
+    def getTableSchema(cls, metadata, tableName = 'TBL_BIND_CARD_REQUEST'):
+        record = BindcardRequest()
+        columns = []
+        '''遍历对象的属性，构造数据库字段'''
+        for key in record.__dict__:
+            attr = getattr(record,key)
+            if isinstance(attr, Field):
+                pass
+                cname = key
+                clen = attr.fieldLength
+                ctype = String(clen)
+                if attr.fieldLength == attr.fieldMinLength and attr.fieldLength < 20:
+                    ctype = CHAR(clen)
+                elif 'YYYYMMDDhhmmss'.equals(attr.fieldType):
+                    ctype = TIMESTAMP
+                columns.append(Column(cname,ctype))
+        '''根据对象的属性及固定的字段，构造表结构'''
+        revTable = Table(tableName,metadata,
+                         Column('id', Integer,primary_key=True),
+                         *columns,
+                         Column('create_ts', TIMESTAMP, default=func.current_timestamp()),
+                         Column('update_ts', TIMESTAMP, onupdate=func.current_timestamp()),
+                         )
+        return revTable
 
 

@@ -11,6 +11,7 @@ from .userlogin.cookie import cookie_check
 from .tableSchema import dbTableInit
 
 from . import userlogin
+from . import bindCard
 
 def main():
     loop = asyncio.get_event_loop()

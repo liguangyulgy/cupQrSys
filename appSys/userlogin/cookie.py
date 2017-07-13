@@ -33,10 +33,10 @@ async def cookie2user(cookie_str):
         if user is None:
             return None
         s = '%s-%s-%s-%s' % (userId, user['password'], expires, _COOKIE_KEY)
-        if sha1 != hashlib.sha3_256(s.encode('utf-8').hexdigest()):
+        if sha1 != hashlib.sha3_256(s.encode('utf-8')).hexdigest():
             logging.info('invalid sha1')
             return None
-        user.passwd = '******'
+        user['password'] = '******'
         return user
     except Exception as e:
         logging.exception(e)
@@ -65,7 +65,7 @@ async def cookie_check(app, handler):
 
 def user2cookie(user,max_age):
     expires = str(int(time.time()) + max_age)
-    s = '%s-%s-%s-%s' % (user[ts.UserInfo.c.userId], user[ts.UserInfo.c.password], expires, _COOKIE_KEY)
-    L = [user[ts.UserInfo.c.userId] ,expires, hashlib.sha3_256(s.encode('utf-8')).hexdigest()]
+    s = '%s-%s-%s-%s' % (user['userId'], user['password'], expires, _COOKIE_KEY)
+    L = [user['userId'] ,expires, hashlib.sha3_256(s.encode('utf-8')).hexdigest()]
     return '-'.join(L)
 

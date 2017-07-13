@@ -2,7 +2,8 @@ __author__ = 'LiGuangyu'
 import re
 
 
-
+"""全渠道：若报文中的数据元标识的 key 对应的value 为空，不上送该报文域；对于组合域，若该组合域无子域上送，该组合域不
+上送，若子域key 对应的value 为空，不上送该子域"""
 
 class Field:
     fieldType = None
@@ -31,13 +32,13 @@ class Field:
         '''根据字段的长度和类型做基础判断'''
         if len(self.value) > self.fieldLength or len(self.value) < self.fieldMinLength:
             return False
-        elif 'N'.equals(self.fieldType):
+        elif 'N' == self.fieldType:
             if not self.value.isdigit():
                 return False
-        elif 'AN'.equals(self.fieldType):
+        elif 'AN' == self.fieldType:
             if not self.value.isalnum():
                 return False
-        elif 'NS'.equals(self.fieldType):
+        elif 'NS' == self.fieldType:
             if self.nsPatten.search(self.value):
                 return False
         '''如果定义了正则表达式验证规则，则进行正则表达式验证'''
@@ -48,14 +49,32 @@ class Field:
 
 
 class ComField(Field):
+
+    subFieldList = {}
+
     def formV(self):
         pass
 
     def __init__(self):
+        super(ComField, self).__init__()
+        self.value = dict()
         pass
+    @classmethod
+    def init(cls, *args, **kwargs):
+        cls.subFieldList.update(kwargs)
 
-    def init(self, dd):
-        self.value =
+    def __getattr__(self, key):
+        return self.value[key]
+
+    def __setattr__(self, key, value):
+        if 'value' == key:
+            self.__dict__[key] = value
+        else:
+            self.value[key].v = value
+
+    def __getitem__(self, key):
+        return self.value[key]
+
 
 
 def fieldFactory(name, fieldType, length, minlength = 0, *, parent = Field):

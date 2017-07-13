@@ -4,13 +4,15 @@ import logging;logging.basicConfig(level=logging.INFO)
 
 from aiomysql.sa import create_engine
 import asyncio
-
+from sqlalchemy import inspect
 
 from sqlalchemy import MetaData
 
 metaData = MetaData()
 
-
+def rp2dict(obj,table):
+    return {c.key: getattr(obj, c.name)
+            for c in inspect(table).columns}
 
 
 class dbInf:
@@ -33,9 +35,9 @@ class dbInf:
                 sql = sql.where(tbl.c[k]==y)
             r = await conn.execute(sql)
             if _unique:
-                return await r.first()
+                return rp2dict(await r.first(), tbl)
             else:
-                return await r.fetchall()
+                return [ rp2dict(x,tbl) for x in await r.fetchall()]
 
     @classmethod
     async def queryAll(cls,tbl,conditions={},*args,**kwargs):
@@ -60,7 +62,8 @@ if __name__ == '__main__':
     from cupQrSys.tableSchema import InsBase
     async def test():
         await dbInf.init()
-        await dbInf.query(InsBase)
+        cc = await dbInf.query(InsBase)
+        dd = object_as_dict(cc)
         print(await dbInf.query(InsBase))
         await dbInf.insert(InsBase,{'ins_id_cd':'00001111','ins_en_nm':'test2'})
     asyncio.get_event_loop().run_until_complete(test())

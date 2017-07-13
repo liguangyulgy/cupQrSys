@@ -54,9 +54,14 @@
                         data: JSON.stringify(that.$data),
                         dataType:"json",
                         success: function(content){
-                            alert(content.message);
+                            if (true == content.Success){
+                                window.location.href = content.Url
+                            }
+                            else{
+                                alert(content.message)
+                            }
                         },
-                        error: function (err) {
+                        fail: function (err) {
                             alert(err.message);
                         }
 

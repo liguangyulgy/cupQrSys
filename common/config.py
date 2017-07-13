@@ -6,7 +6,8 @@ basicConfig={
         'port': 3306,
         'user': 'gyli',
         'password': 'gyligyli',
-        'db': 'CUPS_QR'
+        'db': 'CUPS_QR',
+        'charset':'utf8'
     },
     'redis':{
         'addr':'127.0.0.1',

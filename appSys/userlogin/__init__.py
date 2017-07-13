@@ -37,7 +37,10 @@ async def userLogin(userName,password):
     user = await dbInf.queryOne(ts.UserInfo,userName=userName,password=encrySlat(password,userName))
     if user:
         """登录成功，添加cookie"""
-        r = web.HTTPFound(location='/s/bindcard.html')
+        #r = web.HTTPFound(location='/s/bindcard.html')
+        #直接返回302则前端ajax不能正确跳转，只能得到跳转后的html，因此返回json对象前端人工跳转
+        data = {'Success':True, 'Url':'/s/bindcard.html','Message':'Login Success'}
+        r = web.json_response(data)
         ck = cookie.user2cookie(user,3600)
         r.set_cookie(cookie.COOKIE_NAME,ck)
         return r

@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>用户注册</title>
+    <title>绑定卡片</title>
     <script src="/resources/vue.js"></script>
     <script src="/resources/jquery-3.2.1.js"></script>
     <script>
@@ -11,10 +11,11 @@
             el:'#bindCard',
             data:{
                 message:'',
-                userName:'',
-                phoneNum:'',
-                password:'',
-                emaillAddr:''
+                customerNm:'',
+                certifTp:'',
+                certifId:'',
+                accNo:'',
+                cardNumber:''
             },
             methods:{
                 submit:function(event){
@@ -29,7 +30,7 @@
                         success: function (content) {
                             that.$data.message=content.Message
                         },
-                        error: function (err) {
+                        fail: function (err) {
                             alert(err.message);
                         }
                     });
@@ -48,7 +49,7 @@
             <p>证件号</p>
             <input v-model="certifId"/>
             <p>卡号</p>
-            <input v-model="accNo"/>
+            <input v-model="cardNumber"/>
             <button type="submit">提交</button>
             <p>{{message}}</p>
         </form>
