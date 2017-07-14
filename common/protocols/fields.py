@@ -70,6 +70,7 @@ class ComField(Field):
         if 'value' == key:
             self.__dict__[key] = value
         else:
+            self.value[key] = self.subFieldList[key]()
             self.value[key].v = value
 
     def __getitem__(self, key):

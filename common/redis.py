@@ -67,7 +67,7 @@ class baseConnectPool(object):
 
 
 class redis(baseConnectPool):
-
+    ORDERNOKEY = 'ORDERNOKEY'
 
     def __init__(self):
         pass
@@ -80,23 +80,49 @@ class redis(baseConnectPool):
 
     @classmethod
     @baseConnectPool.tryCatch
-    async def incr(cls,key=None):
-        key = 'test'
-        with await cls.pool as redis:
-            return await redis.incr(key)
+    async def incr(cls,key):
+        with await cls.pool as rdsConn:
+            return await rdsConn.incr(key)
 
     @classmethod
     @baseConnectPool.tryCatch
     async def set(cls,key,value):
-        with await cls.pool as redis:
-            return await redis.set(key,value)
+        with await cls.pool as rdsConn:
+            return await rdsConn.set(key,value)
 
     @classmethod
     @baseConnectPool.tryCatch
     async def get(cls,key):
-        return await cls.conn.get(key)
+        with await cls.pool as rdsConn:
+            return await rdsConn.get(key)
+
+    @classmethod
+    @baseConnectPool.tryCatch
+    async def getOrderId(cls):
+        with await cls.pool as rdsConn:
+            tr = rdsConn.multi_exec()
+            tr.setnx(cls.ORDERNOKEY, 1000000000000)
+            tr.incr(cls.ORDERNOKEY)
+            rev = await tr.execute()
+            if rev[1] > 9000000000000:
+                redis.incr(cls.ORDERNOKEY, - 8000000000000)
+            return rev[1]
+
+    @classmethod
+    @baseConnectPool.tryCatch
+    async def getTime(cls):
+        with await cls.pool as rdsConn:
+            tt = await rdsConn.time()
+            x = time.localtime(tt)
+            rev = time.strftime('%Y%m%d%H%M%S', x)
+            return rev
 
 
+    @classmethod
+    @baseConnectPool.tryCatch
+    async def getTime1(cls):
+        with await cls.pool as rdsConn:
+            return await rdsConn.time()
 
 
 
@@ -109,6 +135,7 @@ if __name__ == '__main__':
         await redis.init()
         a = 0
         print(await redis.set('test',0))
+        print(await redis.getTime1())
         start_time = time.time()
         while True:
             a+=1

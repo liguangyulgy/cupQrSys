@@ -10,9 +10,11 @@ from aiohttp import web
 from common.webServer import post
 import appSys.tableSchema as ts
 from common.mysql import dbInf
+from common.redis import redis
 from common.protocols.qqdBindCard import BindcardRequest
 
 logging.basicConfig(level=logging.INFO)
+
 
 
 @post('/bindcard')
@@ -35,6 +37,20 @@ async def bindCard(customerNm, certifTp, certifId, cardNumber, request):
     bcReq.backUrl = 'http://localhost:8888/bindcardinterface'
     bcReq.acqInsCode = '00001111'
     bcReq.merId = '010123400001111'
+    bcReq.merCatCode = '0000'
+    bcReq.merName = '测试1'
+    bcReq.merAbbr = 'test'
+    bcReq.orderId = await redis.getOrderId()
+    bcReq.txnTime = await redis.getTime()
+
+    bcReq.accNo = cardNumber            #需要加密
+
+    bcReq.customerInfo.certifTp = certifTp
+    bcReq.customerInfo.certifId = certifId
+    bcReq.customerInfo.customerNm = customerNm
+
+    print(bcReq)
+
 
 
     '''3. 提交银联二维码平台cupQrSys'''
