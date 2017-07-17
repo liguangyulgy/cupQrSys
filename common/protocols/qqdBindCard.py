@@ -101,9 +101,16 @@ class qqdProtocol:
     districtName = fieldFactory('districtName', 'ANS', 64)
 
 
+class HttpPostBase:
+    def __str__(self):
+        tmpList = [ x + '=' + str(y) for x,y in self.__dict__.items() if y is not None]
+        rev = '&'.join(tmpList)
+        return rev
 
 
-class BindcardRequest:
+
+
+class BindcardRequest(HttpPostBase):
 
     def __init__(self):
 

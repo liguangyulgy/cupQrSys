@@ -1,6 +1,6 @@
 __author__ = 'LiGuangyu'
 import re
-
+from collections import OrderedDict
 
 """全渠道：若报文中的数据元标识的 key 对应的value 为空，不上送该报文域；对于组合域，若该组合域无子域上送，该组合域不
 上送，若子域key 对应的value 为空，不上送该子域"""
@@ -47,6 +47,13 @@ class Field:
                 return False
         return True
 
+    def __str__(self):
+        return str(self.value)
+
+    def __repr__(self):
+        return self.__str__()
+
+
 
 class ComField(Field):
 
@@ -57,7 +64,7 @@ class ComField(Field):
 
     def __init__(self):
         super(ComField, self).__init__()
-        self.value = dict()
+        self.value = OrderedDict()
         pass
     @classmethod
     def init(cls, *args, **kwargs):
@@ -76,6 +83,10 @@ class ComField(Field):
     def __getitem__(self, key):
         return self.value[key]
 
+    def __str__(self):
+        tmpList = [x+'=' + str(y) for x,y in self.value.items()]
+        rev = '{' + '&'.join(tmpList) + '}'
+        return rev
 
 
 def fieldFactory(name, fieldType, length, minlength = 0, *, parent = Field):
