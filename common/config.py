@@ -18,7 +18,7 @@ basicConfig={
         'host':'127.0.0.1',
         'port':8888
     },
-    'CupServer':{
+    'CupQRServer':{
         'host':'127.0.0.1',
         'port':'8889'
     },
