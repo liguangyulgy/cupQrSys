@@ -1,7 +1,7 @@
 __author__ = 'LiGuangyu'
 import re
 from collections import OrderedDict
-
+import base64
 """全渠道：若报文中的数据元标识的 key 对应的value 为空，不上送该报文域；对于组合域，若该组合域无子域上送，该组合域不
 上送，若子域key 对应的value 为空，不上送该子域"""
 
@@ -86,7 +86,7 @@ class ComField(Field):
     def __str__(self):
         tmpList = [x+'=' + str(y) for x,y in self.value.items()]
         rev = '{' + '&'.join(tmpList) + '}'
-        return rev
+        return base64.b64encode(rev.encode('utf-8')).decode()
 
 
 def fieldFactory(name, fieldType, length, minlength = 0, *, parent = Field):

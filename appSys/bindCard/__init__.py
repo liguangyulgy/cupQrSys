@@ -6,7 +6,8 @@ import logging;
 import time
 
 from aiohttp import web
-
+from common.webClient import HttpClient
+hc = HttpClient(None)
 from common.webServer import post
 import appSys.tableSchema as ts
 from common.mysql import dbInf
@@ -53,7 +54,12 @@ async def bindCard(customerNm, certifTp, certifId, cardNumber, request):
 
 
 
+
     '''3. 提交银联二维码平台cupQrSys'''
+
+    status, rev = await hc.post('http://127.0.0.1:8889/bindcardGate',data=bcReq,type='form')
+
+
     '''4. 收到应答后落库'''
     '''5. 重定向到银联绑卡页面'''
     pass

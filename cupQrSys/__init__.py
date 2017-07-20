@@ -9,7 +9,8 @@ import logging;logging.basicConfig(level=logging.INFO)
 from common.mysql import dbInf
 from common.redis import redis
 from .tableSchema import dbTableInit
-from . import bindCard
+from . import controllers
+
 
 
 def main():

@@ -103,7 +103,7 @@ class qqdProtocol:
 
 class HttpPostBase:
     def __str__(self):
-        tmpList = [ x + '=' + str(y) for x,y in self.__dict__.items() if y is not None]
+        tmpList = [ x + '=' + str(y) for x,y in self.__dict__.items() if y.v is not None]
         rev = '&'.join(tmpList)
         return rev
 

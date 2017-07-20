@@ -10,7 +10,7 @@ import asyncio
 @singleton
 class HttpClient:
 
-    headers={'content-type':'appliction/json',''}
+    headers={'content-type':'appliction/json'}
 
     def __init__(self, loop):
         self.client = aiohttp.ClientSession(loop=loop)
@@ -30,15 +30,16 @@ class HttpClient:
 
     async def post(self,url,urlParas=None,data=None, type='json'):
         myURL = self.encode(url,urlParas)
+        headers = self.headers
         if type == 'json':
             payload = json.dumps(data)
-            headers = self.headers
-        else
-            payload = data.encode('utf-8')
-            headers = self.headers.update({'content-type':'appliction/json'})
-        async with self.client.post(url=myURL,data=payload, header=headers) as resp:
+        elif type == 'form':
+            payload = str(data).encode('utf-8')
+            headers.update({'content-type':'application/x-www-form-urlencoded'})
+        async with self.client.post(url=myURL,data=payload, headers=headers) as resp:
             data = (await resp.json()) if resp.headers['content-type'] =='appliction/json' else (await resp.text())
             return resp.status, data
+
 
 
 '''测试代码'''
