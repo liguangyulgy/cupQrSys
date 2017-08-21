@@ -11,4 +11,5 @@ async def bindCardGate(body):
     print(body)
     bcReq = BindcardRequest()
 
+
     pass
