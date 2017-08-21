@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>用户注册</title>
+    <script src="/resources/vue.js"></script>
+    <script src="/resources/jquery-3.2.1.js"></script>
+    <script>
+        window.onload=function(){
+        new Vue({
+            el:'#register',
+            data:{
+                message:'',
+                userName:'',
+                phoneNum:'',
+                password:'',
+                emaillAddr:''
+            },
+            methods:{
+                submit:function(event){
+                    event.preventDefault();
+                    var that = this
+                    $.ajax({
+                        type: "POST",
+                        url: "/userRegister",
+                        contentType: "application/json; charset=utf-8",
+                        data: JSON.stringify(this.$data),
+                        dataType: "json",
+                        success: function (content) {
+                            that.$data.message=content.Message
+                        },
+                        error: function (err) {
+                            alert(err.message);
+                        }
+                    });
+                }
+            }
+        })
+
+        new Vue({
+            el:'#login',
+            data:{
+                userName:'',
+                password:''
+            },
+            methods:{
+                login:function(event){
+                    event.preventDefault();
+                    var that = this
+                    $.ajax({
+                        type:"POST",
+                        url:"/userLogin",
+                        contentType:"application/json; charset=utf-8",
+                        data: JSON.stringify(that.$data),
+                        dataType:"json",
+                        success: function(content){
+                            alert(content.message);
+                        },
+                        error: function (err) {
+                            alert(err.message);
+                        }
+
+                    })
+                }
+            }
+        })
+
+        }
+    </script>
+</head>
+<body>
+        <form id="register" v-on:submit="submit">
+            <p>卡号</p>
+            <input v-model="userName"/>
+            <p>手机号</p>
+            <input v-model="phoneNum"/>
+            <p>Password</p>
+            <input v-model="password" type="password"/>
+            <p>EmailAddr</p>
+            <input v-model="emaillAddr"/>
+            <button type="submit">保存</button>
+            <p>{{message}}</p>
+        </form>
+</body>
+</html>
